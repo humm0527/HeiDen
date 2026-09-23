@@ -1,0 +1,88 @@
+schema_version: 1
+pack_id: riskaudit_full
+version: v1
+description: RiskAudit 五张标准业务表联合数据质量审计规则包
+
+tables:
+  交易日历表:
+    registry_table: 交易日历表
+    required: true
+    primary_key: [交易市场代码, 日历日期, 记录版本号]
+    business_date_field: 日历日期
+    pit_fields: [信息可得时间]
+    effective_date_rules:
+      - {effective_field: 日历生效时间, usage_date_field: 日历日期}
+    enums:
+      交易时段状态: [正常开市, 休市, 临时停市]
+      来源类型: [公开, 合成]
+
+  证券基础状态日表:
+    registry_table: 证券基础状态日表
+    required: true
+    primary_key: [交易市场代码, 证券代码, 状态日期, 记录版本号]
+    business_date_field: 状态日期
+    security_code_field: 证券代码
+    pit_fields: [信息可得时间]
+    effective_date_rules:
+      - {effective_field: 状态生效时间, usage_date_field: 状态日期}
+    enums:
+      板块代码: [MainBoard, GEM, STAR, KSH, BSE, 主板, 创业板, 科创板, 北交所]
+      证券类型: [CS, 股票]
+      生命周期状态: [Active, Inactive, Delisted, 上市, 未上市, 暂停上市, 终止上市]
+      交易资格状态: [正常, 停牌, 暂停, 终止, 正常成交, 无成交]
+      来源类型: [公开, 合成]
+
+  股票日行情表:
+    registry_table: 股票日行情表
+    required: true
+    primary_key: [交易市场代码, 证券代码, 交易日期, 行情版本号]
+    business_date_field: 交易日期
+    security_code_field: 证券代码
+    pit_fields: [信息可得时间]
+    enums:
+      成交状态: [正常成交, 停牌, 无成交]
+      来源类型: [公开, 合成]
+
+  证券风险状态表:
+    registry_table: 证券风险状态表
+    required: true
+    primary_key: [风险状态记录标识, 记录版本号]
+    business_date_field: 状态开始日期
+    security_code_field: 证券代码
+    pit_fields: [信息可得时间, 证据截止时间]
+    effective_date_rules:
+      - {effective_field: 状态生效时间, usage_date_field: 状态开始日期}
+    enums:
+      风险状态类型: [正常, ST, "*ST"]
+      风险状态值: [生效, 未生效, 解除, 候选, 达阈, 撤销]
+      状态来源类别: [公开事实, 规则派生]
+
+  券商风险分类表:
+    registry_table: 券商风险分类表
+    required: true
+    primary_key: [券商标识, 分类日期, 源快照版本号, 交易市场代码, 证券代码, 分类映射版本号]
+    business_date_field: 分类日期
+    security_code_field: 证券代码
+    pit_fields: [源信息可得时间]
+    effective_date_rules:
+      - {effective_field: 分类生效时间, usage_date_field: 分类日期}
+      - {effective_field: 映射生效时间, usage_date_field: 分类日期}
+    enums:
+      标准风险档位: [DANGEROUS, NON_DANGEROUS, 危险, 非危险, 待确认]
+      来源类型: [公开, 合成]
+
+semantic_checks:
+  - name: market_calendar_coverage
+    options:
+      delisted_date_exclusive: true
+  - name: security_lifecycle_consistency
+    options:
+      master_table: 证券基础状态日表
+      delisted_date_exclusive: true
+      targets:
+        - {table: 股票日行情表, date_field: 交易日期}
+        - {table: 证券风险状态表, date_field: 状态开始日期}
+        - {table: 券商风险分类表, date_field: 分类日期}
+  - name: broker_mapping_consistency
+    options:
+      mapping_file: configs/broker_mapping/broker_mapping_v1.yaml

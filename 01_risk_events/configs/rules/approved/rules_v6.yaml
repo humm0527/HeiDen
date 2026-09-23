@@ -1,0 +1,86 @@
+schema_version: 1
+rule_version: "v6"
+config_role: "approved_broker_metric_rules"
+status: "approved"
+approved_by: "规则维护者"
+approved_at: "2026-08-12"
+effective_from: "2026-08-12"
+supersedes: "v5"
+change_reason: "按 D-069 将已冻结的预警天数、事件/证券命中率和观察期预警率合并为单一中文最终汇总表；所有业务公式、PIT、映射和风险事件保持 v5 不变"
+decision_authority: "docs/DECISIONS.md"
+decision_ids: ["D-050", "D-051", "D-052", "D-053", "D-054", "D-062", "D-063", "D-064", "D-067", "D-068", "D-069"]
+scope: "broker_metrics_only"
+
+outputs:
+  broker_metric_results:
+    csv_schema: "broker_metric_csv_cn_v3"
+    external_field_language: "zh-CN"
+    internal_python_fields: "STABLE_ENGLISH"
+    overwrite_allowed: false
+  final_broker_metric_summary:
+    enabled: true
+    filename: "券商预警指标最终汇总.csv"
+    event_type_views: ["非ST连续跌停风险股票", "新增ST风险股票", "两类风险股票合计"]
+    warning_rate_scope: "OBSERVATION_PERIOD"
+  all_broker_risk_event_hits:
+    enabled: true
+    filename: "all_broker_risk_event_hits.csv"
+    evaluation_unit: "RISK_EVENT_X_BROKER"
+    keep_multiple_events_per_security: true
+
+broker_classification:
+  mapping_file: "configs/broker_mapping/broker_mapping_v3.yaml"
+  mapping_version: "v3"
+  valid_until: "NEXT_CLASSIFICATION_OR_EXPLICIT_END"
+  date_only_available_at: "END_OF_CLASSIFICATION_DATE"
+  date_only_usable_from: "NEXT_TRADING_DAY"
+  early_identification_cutoff: "PREVIOUS_TRADING_DAY_CLOSE_BEFORE_FIRST_RISK_FACT"
+  weekend_source_rows:
+    action: "IGNORE_ROW_BEFORE_CLASSIFICATION_STATE_CHAIN"
+    creates_classification_state: false
+    creates_unknown_state: false
+    breaks_dangerous_run_continuity: false
+    resets_dangerous_run_start: false
+    participates_in_pit_selection: false
+    participates_in_warning_rate_snapshot: false
+    preserve_source_for_audit: true
+  daily_precedence:
+    - {when: "ST_STATUS_MISSING", result: "UNKNOWN"}
+    - {when: "ST_OR_STAR_ST", result: "DANGEROUS", reason: "ST_OVERRIDE"}
+    - {when: "NON_ST_AND_RAW_BLANK", result: "NON_DANGEROUS"}
+    - {when: "NON_ST_AND_RAW_EXACTLY_MAPPED", result: "USE_EXACT_MAPPING"}
+    - {when: "NON_ST_AND_RAW_UNKNOWN_OR_ILLEGAL", result: "UNKNOWN"}
+
+warning_days:
+  enabled: true
+  evaluation_unit: "RISK_EVENT_X_BROKER"
+  risk_anchor: "FIRST_FACT_DATE"
+  cutoff: "PREVIOUS_TRADING_DAY_CLOSE_BEFORE_FIRST_RISK_FACT"
+  run_start: "FIRST_CLASSIFICATION_DATE_OF_MOST_RECENT_CONTINUOUS_DANGEROUS_RUN_AT_CUTOFF"
+  counting_unit: "SECURITY_MARKET_TRADING_DAY"
+  formula: "TRADING_DAY_ORDINAL_FIRST_FACT_MINUS_DANGEROUS_RUN_START_CLASSIFICATION_DATE"
+  previous_trading_day_to_first_fact_result: 1
+  repeated_dangerous_resets_run: false
+  ignored_weekend_source_rows_break_continuity: false
+  non_dangerous_then_dangerous_resets_run: true
+  unknown_breaks_continuity_proof: true
+  dangerous_after_unknown_starts_new_run: true
+  left_censored_official_warning_days_must_be_null: true
+
+metrics:
+  warning_days_distribution:
+    event_type_views: ["NON_ST_CONTINUOUS_LIMIT_DOWN", "NEW_ST", "ALL_RISK_EVENTS"]
+    median_mean_decimal_scale: 6
+    rounding: "ROUND_HALF_UP"
+    zero_sample_status: "NOT_APPLICABLE"
+  risk_hit_rate:
+    units: ["RISK_EVENT", "DISTINCT_RISK_SECURITY"]
+    event_type_views: ["NON_ST_CONTINUOUS_LIMIT_DOWN", "NEW_ST", "ALL_RISK_EVENTS"]
+    hit_definition: "DANGEROUS_AT_PREVIOUS_TRADING_DAY_CLOSE"
+    zero_denominator_status: "NOT_APPLICABLE"
+  dangerous_bucket_efficiency:
+    display_name_zh: "预警率"
+    denominator_scope: "PER_BROKER_OWN_DANGEROUS_SET"
+    aggregation_views: ["SNAPSHOT", "OBSERVATION_PERIOD"]
+    event_type_views: ["NON_ST_CONTINUOUS_LIMIT_DOWN", "NEW_ST", "ALL_RISK_EVENTS"]
+    zero_denominator_status: "NOT_APPLICABLE"

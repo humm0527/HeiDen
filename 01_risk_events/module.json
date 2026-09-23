@@ -1,0 +1,50 @@
+{
+  "task": "risk-events",
+  "task_aliases": [],
+  "label": "连续跌停与新增 ST 状态机",
+  "description": "从冻结市场快照生成连续跌停、新增 ST 和压力观察事实。",
+  "primary_sources": [
+    "src/riskaudit/risk_events",
+    "src/riskaudit/market_foundation/risk_shadow.py",
+    "src/riskaudit/market_foundation/risk_shadow_exports.py",
+    "src/riskaudit/market_foundation/risk_shadow_reconciliation.py"
+  ],
+  "support_sources": [
+    "src/riskaudit/__init__.py",
+    "src/riskaudit/cancellation.py",
+    "src/riskaudit/business_files.py",
+    "src/riskaudit/local_market_connection.py",
+    "src/riskaudit/runtime_config.py",
+    "src/riskaudit/tasks",
+    "src/riskaudit/model_comparison_build.py",
+    "src/riskaudit/model_comparison_results.py",
+    "src/riskaudit/market_foundation",
+    "src/riskaudit/validation",
+    "src/riskaudit/data_ingestion",
+    "src/riskaudit/performance.py",
+    "scripts/run_rqdata_market.py",
+    "scripts/run_real_risk_events.py"
+  ],
+  "config_sources": [
+    "configs/rules/approved",
+    "configs/mapping",
+    "configs/validation"
+  ],
+  "output_contract": [
+    "risk_events.csv",
+    "continuous_limit_down_segments.csv",
+    "calculation_manifest.json"
+  ],
+  "output_contracts": {
+    "risk-events": [
+      "risk_events.csv",
+      "continuous_limit_down_segments.csv",
+      "calculation_manifest.json"
+    ]
+  },
+  "portable_path_anchors": [
+    "@project/",
+    "@data/",
+    "@config/"
+  ]
+}

@@ -1,0 +1,23 @@
+schema_version: 1
+rule_version: "limit_down_pressure_v1"
+status: "approved"
+approved_by: "规则维护者"
+approved_at: "2026-08-18"
+scope: "low_threshold_non_st_limit_down_pressure_observation"
+event_type: "NON_ST_LIMIT_DOWN_PRESSURE_OBSERVATION"
+formal_event_type: "NON_ST_CONTINUOUS_LIMIT_DOWN"
+thresholds:
+  MAIN: 2
+  CHINEXT: 1
+  STAR: 1
+segment_boundary:
+  reset_at_observation_start: true
+  break_on_non_limit_down: true
+  break_on_suspension_or_no_trade: true
+  break_on_transition_to_st: true
+upgrade:
+  same_segment_only: true
+  formal_thresholds_from: "approved formal risk-event rule"
+output_policy:
+  writes_formal_risk_events: false
+  keep_event_detail: true

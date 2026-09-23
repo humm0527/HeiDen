@@ -1,0 +1,97 @@
+schema_version: 1
+mapping_version: "v3"
+status: "approved"
+scope: "concentration_classification_and_synthetic_regression"
+decision_authority: "docs/DECISIONS.md"
+
+change_control:
+  change_reason: "纠正 v2 未按 D-054 落实券商自身 A-E/A-F 分类体系的配置错误"
+  previous: "broker_mapping_v2.yaml"
+  new:
+    - "按 D-068 将券商01、券商02、券商04、券商05、券商06、券商13、券商14的 E 档精确映射为危险"
+    - "按 D-068 将券商09、券商21的 E/F 档精确映射为危险"
+    - "按 D-068 将券商10 E类精确映射为危险"
+  effective_date: "2026-08-12"
+  approved_by: "规则维护者"
+  supersedes: "broker_mapping_v2.yaml"
+
+inference_policy:
+  infer_from_alphabetical_order: false
+  infer_from_numeric_order: false
+  infer_from_text_meaning: false
+  infer_from_regular_expression: false
+  infer_from_other_broker_mapping: false
+  require_exact_broker_and_raw_code_match: true
+  decision_ids: ["D-005", "D-054", "D-068"]
+
+unknown_value_policy:
+  action: "EXCLUDE_RECORD_AS_UNKNOWN_WITH_AUDIT"
+  normalized_value: "UNKNOWN"
+  block_entire_task: false
+  decision_id: "D-051"
+
+blank_value_policy:
+  st_status_missing: "UNKNOWN_EXCLUDE_WITH_AUDIT"
+  st_or_star_st: "DANGEROUS_ST_OVERRIDE"
+  non_st: "NON_DANGEROUS_GENERAL_STOCK"
+  decision_id: "D-051"
+
+brokers:
+  券商01:
+    source_kind: "business"
+    mappings: {A: "NON_DANGEROUS", B: "NON_DANGEROUS", C: "NON_DANGEROUS", D: "NON_DANGEROUS", E: "DANGEROUS"}
+  券商02:
+    source_kind: "business"
+    mappings: {A: "NON_DANGEROUS", B: "NON_DANGEROUS", C: "NON_DANGEROUS", D: "NON_DANGEROUS", E: "DANGEROUS"}
+  券商03:
+    source_kind: "business"
+    mappings: {A: "NON_DANGEROUS", B: "NON_DANGEROUS", C: "NON_DANGEROUS", D: "NON_DANGEROUS", E: "NON_DANGEROUS", F: "DANGEROUS", G: "DANGEROUS"}
+  券商04:
+    source_kind: "business"
+    mappings: {A: "NON_DANGEROUS", B: "NON_DANGEROUS", C: "NON_DANGEROUS", D: "NON_DANGEROUS", E: "DANGEROUS"}
+  券商05:
+    source_kind: "business"
+    mappings: {A: "NON_DANGEROUS", B: "NON_DANGEROUS", C: "NON_DANGEROUS", D: "NON_DANGEROUS", E: "DANGEROUS"}
+  券商06:
+    source_kind: "business"
+    mappings: {A: "NON_DANGEROUS", B: "NON_DANGEROUS", C: "NON_DANGEROUS", D: "NON_DANGEROUS", E: "DANGEROUS"}
+  券商09:
+    source_kind: "business"
+    mappings: {A: "NON_DANGEROUS", B: "NON_DANGEROUS", C: "NON_DANGEROUS", D: "NON_DANGEROUS", E: "DANGEROUS", F: "DANGEROUS"}
+  券商13:
+    source_kind: "business"
+    mappings: {A: "NON_DANGEROUS", B: "NON_DANGEROUS", C: "NON_DANGEROUS", D: "NON_DANGEROUS", E: "DANGEROUS"}
+  券商14:
+    source_kind: "business"
+    mappings: {A: "NON_DANGEROUS", B: "NON_DANGEROUS", C: "NON_DANGEROUS", D: "NON_DANGEROUS", E: "DANGEROUS"}
+  券商21:
+    source_kind: "business"
+    mappings: {A: "NON_DANGEROUS", B: "NON_DANGEROUS", C: "NON_DANGEROUS", D: "NON_DANGEROUS", E: "DANGEROUS", F: "DANGEROUS"}
+  券商10:
+    source_kind: "business"
+    mappings: {A类: "NON_DANGEROUS", B类: "NON_DANGEROUS", C类: "NON_DANGEROUS", D类: "NON_DANGEROUS", E类: "DANGEROUS"}
+  券商11:
+    source_kind: "business"
+    mappings: {R1: "NON_DANGEROUS", R2: "NON_DANGEROUS", R3: "NON_DANGEROUS", R4: "NON_DANGEROUS", R5: "NON_DANGEROUS", R6: "DANGEROUS"}
+  券商18:
+    source_kind: "business"
+    mappings: {A组: "NON_DANGEROUS", B组: "NON_DANGEROUS", C组: "NON_DANGEROUS", D组: "NON_DANGEROUS", E组: "NON_DANGEROUS", F组: "DANGEROUS", G组: "DANGEROUS"}
+  券商19:
+    source_kind: "business"
+    mappings: {A类证券: "NON_DANGEROUS", B类证券: "NON_DANGEROUS", C类证券: "NON_DANGEROUS", D类证券: "NON_DANGEROUS", E类证券: "NON_DANGEROUS", F类证券: "DANGEROUS", G类证券: "DANGEROUS"}
+  券商20:
+    source_kind: "business"
+    mappings: {A组: "NON_DANGEROUS", B组: "NON_DANGEROUS", C组: "NON_DANGEROUS", D组: "NON_DANGEROUS", E组: "NON_DANGEROUS", F组: "DANGEROUS", G组: "DANGEROUS"}
+  SYNTH_BROKER_ORCHID:
+    source_kind: "synthetic"
+    mappings: {ORCHID_CLEAR: "NON_DANGEROUS", ORCHID_WATCH: "NON_DANGEROUS", ORCHID_BLOCK: "DANGEROUS", ORCHID_RESTRICTED: "DANGEROUS"}
+  SYNTH_BROKER_CEDAR:
+    source_kind: "synthetic"
+    mappings: {CEDAR_GREEN: "NON_DANGEROUS", CEDAR_AMBER: "DANGEROUS", CEDAR_RED: "DANGEROUS"}
+
+unmapped_broker_fields:
+  reason: "当前宽表校验包未声明这些券商的非空原始值枚举，禁止猜测"
+  fields: ["券商07", "券商08", "券商12", "券商15", "券商16", "券商17"]
+  nonblank_value_action: "UNKNOWN_EXCLUDE_WITH_AUDIT"
+
+allowed_normalized_values: ["DANGEROUS", "NON_DANGEROUS", "UNKNOWN"]

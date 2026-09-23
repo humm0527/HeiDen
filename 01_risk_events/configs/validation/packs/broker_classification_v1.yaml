@@ -1,0 +1,30 @@
+schema_version: 1
+pack_id: broker_classification
+version: v1
+description: 券商风险分类标准业务表的独立预检规则包
+
+ignored_tables:
+  - 交易日历表
+  - 证券基础状态日表
+  - 股票日行情表
+  - 证券风险状态表
+
+tables:
+  券商风险分类表:
+    registry_table: 券商风险分类表
+    required: true
+    primary_key: [券商标识, 分类日期, 源快照版本号, 交易市场代码, 证券代码, 分类映射版本号]
+    business_date_field: 分类日期
+    security_code_field: 证券代码
+    pit_fields: [源信息可得时间]
+    effective_date_rules:
+      - {effective_field: 分类生效时间, usage_date_field: 分类日期}
+      - {effective_field: 映射生效时间, usage_date_field: 分类日期}
+    enums:
+      标准风险档位: [DANGEROUS, NON_DANGEROUS, 危险, 非危险, 待确认]
+      来源类型: [公开, 合成]
+
+semantic_checks:
+  - name: broker_mapping_consistency
+    options:
+      mapping_file: configs/broker_mapping/broker_mapping_v1.yaml

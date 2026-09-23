@@ -1,0 +1,92 @@
+schema_version: 1
+source_layer: market_data
+source_name: rqdata
+mapping_version: rqdata-v1
+notes:
+  - "Uses documented RQData field names only; no credentials are stored here."
+  - "Broker risk classifications are not represented as an RQData API dataset."
+datasets:
+  rqdata_trading_calendar:
+    target_table: 交易日历表
+    fields:
+      - {business_field: 交易市场代码, python_field: market_code, context_key: market_code, required: true}
+      - {business_field: 日历日期, python_field: calendar_date, exact: date, aliases: [trading_date], required: true}
+      - {business_field: 记录版本号, python_field: record_version, constant: 1, required: true}
+      - {business_field: 是否交易日, python_field: is_trading_day, constant: true, required: true}
+      - {business_field: 交易时段状态, python_field: trading_session_status, constant: 正常开市, required: true}
+      - {business_field: 日历生效时间, python_field: calendar_effective_at, exact: calendar_effective_at, required: true}
+      - {business_field: 信息可得时间, python_field: information_available_at, context_key: information_available_at, required: true}
+      - {business_field: 记录入库时间, python_field: ingested_at, context_key: ingested_at, required: true}
+      - {business_field: 来源类型, python_field: source_type, constant: 公开, required: true}
+      - {business_field: 来源记录标识, python_field: source_record_id, exact: source_record_id, required: true}
+
+  rqdata_security_master:
+    target_table: 证券基础状态日表
+    fields:
+      - {business_field: 交易市场代码, python_field: market_code, exact: exchange, aliases: [market], required: true}
+      - {business_field: 证券代码, python_field: security_code, exact: order_book_id, aliases: [ticker], candidates: [security_id, instrument_id], required: true}
+      - {business_field: 状态日期, python_field: status_date, exact: status_date, required: true}
+      - {business_field: 记录版本号, python_field: record_version, constant: 1, required: true}
+      - {business_field: 板块代码, python_field: board_code, exact: board_type, aliases: [board], required: true}
+      - {business_field: 证券类型, python_field: security_type, exact: type, aliases: [instrument_type], required: true}
+      - {business_field: 生命周期状态, python_field: lifecycle_status, exact: status, aliases: [listing_status], required: true}
+      - {business_field: 上市日期, python_field: listed_date, exact: listed_date, aliases: [listing_date], required: true}
+      - {business_field: 退市日期, python_field: delisted_date, exact: de_listed_date, aliases: [delisted_date], required: true}
+      - {business_field: 交易资格状态, python_field: trading_eligibility_status, exact: trading_eligibility_status, required: true}
+      - {business_field: 状态生效时间, python_field: status_effective_at, context_key: status_effective_at, required: true}
+      - {business_field: 信息可得时间, python_field: information_available_at, context_key: information_available_at, required: true}
+      - {business_field: 记录入库时间, python_field: ingested_at, context_key: ingested_at, required: true}
+      - {business_field: 来源类型, python_field: source_type, constant: 公开, required: true}
+      - {business_field: 来源记录标识, python_field: source_record_id, exact: source_record_id, required: true}
+      - {business_field: 证券简称, python_field: security_name, exact: symbol, aliases: [security_name], required: false}
+      - {business_field: 行业分类, python_field: industry_classification, exact: sector_code, aliases: [industry_code], required: false}
+
+  rqdata_market_daily:
+    target_table: 股票日行情表
+    fields:
+      - {business_field: 交易市场代码, python_field: market_code, exact: exchange, aliases: [market], required: true}
+      - {business_field: 证券代码, python_field: security_code, exact: order_book_id, aliases: [ticker], candidates: [security_id, instrument_id], required: true}
+      - {business_field: 交易日期, python_field: trading_date, exact: date, aliases: [trading_date], required: true}
+      - {business_field: 行情版本号, python_field: market_data_version, constant: 1, required: true}
+      - {business_field: 成交状态, python_field: trading_status, exact: trading_status, required: true}
+      - {business_field: 前收盘价, python_field: previous_close, exact: prev_close, aliases: [previous_close], required: true}
+      - {business_field: 开盘价, python_field: open_price, exact: open, aliases: [open_price], required: true}
+      - {business_field: 最高价, python_field: high_price, exact: high, aliases: [high_price], required: true}
+      - {business_field: 最低价, python_field: low_price, exact: low, aliases: [low_price], required: true}
+      - {business_field: 收盘价, python_field: close_price, exact: close, aliases: [close_price], required: true}
+      - {business_field: 成交量, python_field: volume, exact: volume, required: true}
+      - {business_field: 成交额, python_field: turnover, exact: total_turnover, aliases: [turnover], required: true}
+      - {business_field: 涨停价, python_field: limit_up_price, exact: limit_up, aliases: [limit_up_price], required: true}
+      - {business_field: 跌停价, python_field: limit_down_price, exact: limit_down, aliases: [limit_down_price], required: true}
+      - {business_field: 信息可得时间, python_field: information_available_at, context_key: information_available_at, required: true}
+      - {business_field: 记录入库时间, python_field: ingested_at, context_key: ingested_at, required: true}
+      - {business_field: 来源类型, python_field: source_type, constant: 公开, required: true}
+      - {business_field: 来源记录标识, python_field: source_record_id, exact: source_record_id, required: true}
+    unresolved_candidates:
+      adj_close_price:
+        - {business_field: 复权收盘价, python_field: adjusted_close_price}
+        - {business_field: 收盘价, python_field: close_price}
+
+  rqdata_st_status:
+    target_table: 证券风险状态表
+    fields:
+      - {business_field: 风险状态记录标识, python_field: risk_status_record_id, exact: risk_status_record_id, required: true}
+      - {business_field: 记录版本号, python_field: record_version, constant: 1, required: true}
+      - {business_field: 交易市场代码, python_field: market_code, exact: exchange, required: true}
+      - {business_field: 证券代码, python_field: security_code, exact: order_book_id, aliases: [ticker], required: true}
+      - {business_field: 风险状态类型, python_field: risk_status_type, exact: risk_status_type, required: true}
+      - {business_field: 风险状态值, python_field: risk_status_value, exact: risk_status_value, required: true}
+      - {business_field: 状态来源类别, python_field: status_source_category, exact: status_source_category, required: true}
+      - {business_field: 状态开始日期, python_field: status_start_date, exact: status_start_date, required: true}
+      - {business_field: 状态结束日期, python_field: status_end_date, exact: status_end_date, required: true}
+      - {business_field: 首次事实日期, python_field: first_fact_date, constant: null, required: true}
+      - {business_field: 达到门槛日期, python_field: threshold_reached_date, constant: null, required: true}
+      - {business_field: 风险认定日期, python_field: risk_recognition_date, constant: null, required: true}
+      - {business_field: 状态生效时间, python_field: status_effective_at, exact: status_effective_at, required: true}
+      - {business_field: 证据截止时间, python_field: evidence_cutoff_at, context_key: evidence_cutoff_at, required: true}
+      - {business_field: 信息可得时间, python_field: information_available_at, context_key: information_available_at, required: true}
+      - {business_field: 风险规则版本号, python_field: risk_rule_version, constant: null, required: true}
+      - {business_field: 计算批次标识, python_field: calculation_batch_id, constant: null, required: true}
+      - {business_field: 上游数据快照标识, python_field: upstream_snapshot_id, context_key: upstream_snapshot_id, required: true}
+      - {business_field: 记录入库时间, python_field: ingested_at, context_key: ingested_at, required: true}
+      - {business_field: 来源记录标识, python_field: source_record_id, exact: source_record_id, required: true}

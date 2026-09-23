@@ -1,0 +1,25 @@
+"""Shared broker metric constants without calculation or storage dependencies."""
+
+BUSINESS_BROKER_COLUMNS = (
+    "券商01",
+    "券商02",
+    "券商03",
+    "券商04",
+    "券商05",
+    "券商06",
+    "券商07",
+    "券商08",
+    "券商09",
+    "券商10",
+    "券商11",
+    "券商12",
+    "券商13",
+    "券商14",
+    "券商15",
+    "券商16",
+    "券商17",
+    "券商18",
+    "券商19",
+    "券商20",
+    "券商21",
+)

@@ -1,0 +1,36 @@
+# Keep this file when copying the module to a separate repository.
+.venv/
+.venv-*/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.DS_Store
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*credentials*.json
+*secrets*.json
+local_market_connection.json
+
+# Machine-specific instructions and task files stay local.
+/README.md
+/task*.json
+/交付说明*.md
+
+# Local data, market downloads and calculated outputs stay local.
+/data/*
+!/data/README.md
+!/data/.gitkeep
+
+# This directory contains source code; publish only its code and documentation.
+!/data/月截面数据转化为逐日数据/
+/data/月截面数据转化为逐日数据/*
+!/data/月截面数据转化为逐日数据/*.py
+!/data/月截面数据转化为逐日数据/README.md
+
+# Local table input selection.
+/scoring_tables_8_9.json

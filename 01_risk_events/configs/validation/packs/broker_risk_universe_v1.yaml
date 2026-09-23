@@ -1,0 +1,44 @@
+schema_version: 1
+pack_id: broker_risk_universe
+version: v1
+description: 风险事件计算只提取第五表证券并集时使用的原始集中度宽表专用门禁
+
+tables:
+  券商分类宽表:
+    required: true
+    primary_key: [biz_date, stk_code]
+    business_date_field: biz_date
+    fields:
+      - {name: biz_date, data_type: date, required: true, nullable: false}
+      - {name: stk_code, data_type: string, required: true, nullable: false}
+      - {name: 券商01, data_type: string, required: false, nullable: true}
+      - {name: 券商02, data_type: string, required: false, nullable: true}
+      - {name: 券商03, data_type: string, required: false, nullable: true}
+      - {name: 券商04, data_type: string, required: false, nullable: true}
+      - {name: 券商05, data_type: string, required: false, nullable: true}
+      - {name: 券商06, data_type: string, required: false, nullable: true}
+      - {name: 券商07, data_type: string, required: false, nullable: true}
+      - {name: 券商08, data_type: string, required: false, nullable: true}
+      - {name: 券商09, data_type: string, required: false, nullable: true}
+      - {name: 券商10, data_type: string, required: false, nullable: true}
+      - {name: 券商11, data_type: string, required: false, nullable: true}
+      - {name: 券商12, data_type: string, required: false, nullable: true}
+      - {name: 券商13, data_type: string, required: false, nullable: true}
+      - {name: 券商14, data_type: string, required: false, nullable: true}
+      - {name: 券商15, data_type: string, required: false, nullable: true}
+      - {name: 券商16, data_type: string, required: false, nullable: true}
+      - {name: 券商17, data_type: string, required: false, nullable: true}
+      - {name: 券商18, data_type: string, required: false, nullable: true}
+      - {name: 券商19, data_type: string, required: false, nullable: true}
+      - {name: 券商20, data_type: string, required: false, nullable: true}
+      - {name: 券商21, data_type: string, required: false, nullable: true}
+
+semantic_checks:
+  - name: wide_broker_classification_quality
+    options:
+      table: 券商分类宽表
+      date_field: biz_date
+      security_field: stk_code
+      allowed_market_suffixes: [SZ, SH, BJ]
+      minimum_filled_brokers: 0
+      broker_fields: []

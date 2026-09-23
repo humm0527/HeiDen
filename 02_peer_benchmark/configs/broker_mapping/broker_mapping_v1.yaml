@@ -1,0 +1,51 @@
+schema_version: 1
+mapping_version: "v1"
+status: "requirements_freeze_pending_confirmation"
+scope: "synthetic_examples_only"
+decision_authority: "docs/DECISIONS.md"
+
+change_control:
+  change_reason: "Initial explicit mapping structure for fully synthetic broker examples"
+  previous: null
+  new:
+    - "Added exact-value mappings for SYNTH_BROKER_ORCHID"
+    - "Added exact-value mappings for SYNTH_BROKER_CEDAR"
+    - "Disabled alphabetical, numeric, textual, regex, and cross-broker inference"
+  effective_date: null
+  approved_by: null
+  supersedes: null
+
+inference_policy:
+  infer_from_alphabetical_order: false
+  infer_from_numeric_order: false
+  infer_from_text_meaning: false
+  infer_from_regular_expression: false
+  infer_from_other_broker_mapping: false
+  require_exact_broker_and_raw_code_match: true
+  decision_id: "D-005"
+
+unknown_value_policy:
+  action: null
+  status: "pending_confirmation"
+  question_id: "Q-009"
+
+# 下列券商名和代码完全虚构，仅用于证明“逐券商、逐原始值显式映射”的配置形式。
+brokers:
+  SYNTH_BROKER_ORCHID:
+    source_kind: "synthetic"
+    mappings:
+      ORCHID_CLEAR: "NON_DANGEROUS"
+      ORCHID_WATCH: "NON_DANGEROUS"
+      ORCHID_BLOCK: "DANGEROUS"
+      ORCHID_RESTRICTED: "DANGEROUS"
+
+  SYNTH_BROKER_CEDAR:
+    source_kind: "synthetic"
+    mappings:
+      CEDAR_GREEN: "NON_DANGEROUS"
+      CEDAR_AMBER: "DANGEROUS"
+      CEDAR_RED: "DANGEROUS"
+
+allowed_normalized_values:
+  - "DANGEROUS"
+  - "NON_DANGEROUS"

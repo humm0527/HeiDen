@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "riskaudit-peer_benchmark"
+version = "0.1.0"
+description = "Independent RiskAudit handover bundle: peer-benchmark"
+requires-python = ">=3.11"
+dependencies = [
+  "bcrypt>=4,<6",
+  "duckdb>=1.4,<2",
+  "openpyxl>=3.1,<4",
+  "pandas>=2.2,<3",
+  "python-multipart>=0.0.22,<1",
+  "PyYAML>=6.0,<7",
+]
+
+[project.scripts]
+riskaudit-task = "riskaudit.tasks.__main__:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

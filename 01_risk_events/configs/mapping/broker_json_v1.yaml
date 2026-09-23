@@ -1,0 +1,24 @@
+schema_version: 1
+source_layer: business_input
+source_name: generic_broker_json
+mapping_version: broker-json-v1
+datasets:
+  broker_classification_json:
+    target_table: 券商风险分类表
+    fields:
+      - {business_field: 券商标识, python_field: broker_id, exact: broker_id, aliases: [broker_code], required: true}
+      - {business_field: 分类日期, python_field: classification_date, exact: classification_date, aliases: [as_of_date], required: true}
+      - {business_field: 源快照版本号, python_field: source_snapshot_version, exact: snapshot_version, aliases: [source_version], required: true}
+      - {business_field: 交易市场代码, python_field: market_code, exact: market_code, aliases: [exchange], required: true}
+      - {business_field: 证券代码, python_field: security_code, exact: security_code, aliases: [order_book_id, ticker], required: true}
+      - {business_field: 分类映射版本号, python_field: classification_mapping_version, context_key: classification_mapping_version, required: true}
+      - {business_field: 原始分类值, python_field: raw_classification_value, exact: raw_classification, aliases: [risk_class], required: true}
+      - {business_field: 标准风险档位, python_field: standardized_risk_bucket, exact: standardized_risk_bucket, required: true}
+      - {business_field: 分类生效时间, python_field: classification_effective_at, exact: effective_at, required: true}
+      - {business_field: 源信息可得时间, python_field: source_information_available_at, exact: available_at, required: true}
+      - {business_field: 映射生效时间, python_field: mapping_effective_at, context_key: mapping_effective_at, required: true}
+      - {business_field: 映射结果生成时间, python_field: mapping_generated_at, context_key: mapping_generated_at, required: true}
+      - {business_field: 记录入库时间, python_field: ingested_at, context_key: ingested_at, required: true}
+      - {business_field: 来源类型, python_field: source_type, constant: 合成, required: true}
+      - {business_field: 来源快照标识, python_field: source_snapshot_id, exact: source_snapshot_id, required: true}
+      - {business_field: 映射记录标识, python_field: mapping_record_id, exact: mapping_record_id, required: true}

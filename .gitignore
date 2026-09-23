@@ -1,0 +1,42 @@
+# Local runtime, credentials and editor files.
+.venv/
+.venv-*/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.DS_Store
+.vscode/
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*credentials*.json
+*secrets*.json
+local_market_connection.json
+
+# Local reports and run history.
+/结果输出/
+/ACCEPTANCE_REPORT_*.md
+**/data/outputs/
+**/last_run_manifest.json
+*.log
+
+# Business attachments, archives and market databases.
+*.zip
+*.7z
+*.tar
+*.gz
+*.db
+*.db-*
+*.duckdb
+*.duckdb.*
+*.sqlite*
+*.parquet
+/*.csv
+/*.xlsx
+/*.xls
+/*.docx
+/*.pdf

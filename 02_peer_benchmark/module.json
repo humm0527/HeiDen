@@ -1,0 +1,51 @@
+{
+  "task": "peer-benchmark",
+  "task_aliases": [
+    "single-model"
+  ],
+  "label": "全行业券商评价与券商03单模型运行",
+  "description": "共享一套券商 PIT 评价引擎：全行业使用低频冻结快照，券商03单模型使用可独立高频更新的历史快照。",
+  "primary_sources": [
+    "src/riskaudit/broker_metrics/real_run.py",
+    "src/riskaudit/broker_metrics/real_run_inputs.py",
+    "src/riskaudit/broker_metrics/real_run_assessment.py",
+    "src/riskaudit/broker_metrics/metrics.py"
+  ],
+  "support_sources": [
+    "src/riskaudit/__init__.py",
+    "src/riskaudit/cancellation.py",
+    "src/riskaudit/business_files.py",
+    "src/riskaudit/local_market_connection.py",
+    "src/riskaudit/runtime_config.py",
+    "src/riskaudit/tasks",
+    "src/riskaudit/model_comparison_build.py",
+    "src/riskaudit/model_comparison_results.py",
+    "src/riskaudit/broker_metrics",
+    "src/riskaudit/broker_ranking.py"
+  ],
+  "config_sources": [
+    "configs/rules/approved",
+    "configs/broker_mapping"
+  ],
+  "output_contract": [
+    "event_broker_assessments.csv",
+    "券商预警指标最终汇总.csv"
+  ],
+  "output_contracts": {
+    "peer-benchmark": [
+      "event_broker_assessments.csv",
+      "券商预警指标最终汇总.csv"
+    ],
+    "single-model": [
+      "event_broker_assessments.csv",
+      "券商预警指标最终汇总.csv",
+      "券商03A-G档位风险事件汇总.csv",
+      "券商03A-G档位风险事件明细.csv"
+    ]
+  },
+  "portable_path_anchors": [
+    "@project/",
+    "@data/",
+    "@config/"
+  ]
+}

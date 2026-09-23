@@ -1,0 +1,209 @@
+schema_version: 1
+rule_version: "v4"
+config_role: "approved_concentration_rules"
+status: "approved"
+approved_by: "规则维护者"
+approved_at: "2026-08-12"
+effective_from: "2026-08-12"
+supersedes: "v3"
+change_reason: "关闭 Q-019：周六、周日券商分类宽表行在进入状态链前忽略，既不形成分类或未知状态，也不截断连续危险轮次；v3 其余指标口径和风险事件状态机保持不变"
+decision_authority: "docs/DECISIONS.md"
+decision_ids: ["D-003", "D-004", "D-007", "D-008", "D-009", "D-010", "D-043", "D-044", "D-045", "D-046", "D-047", "D-048", "D-049", "D-050", "D-051", "D-052", "D-053", "D-054", "D-058", "D-062", "D-063", "D-064", "D-067"]
+scope: "risk_event_and_broker_metric_design"
+
+task_scope:
+  observation_start: "2026-01-01"
+  observation_end: "2026-07-24"
+  security_universe_source: "BROKER_CLASSIFICATION_TABLE_UNION"
+  universe_as_of_date: "2026-07-24"
+  scan_from_first_classification_date: false
+
+board_policy:
+  aliases:
+    MainBoard: "MAIN"
+    主板: "MAIN"
+    GEM: "CHINEXT"
+    创业板: "CHINEXT"
+    STAR: "STAR"
+    KSH: "STAR"
+    科创板: "STAR"
+    BSE: "BSE"
+    北交所: "BSE"
+  thresholds:
+    MAIN: 3
+    CHINEXT: 2
+    STAR: 2
+  excluded_boards:
+    BSE: "当前集中度规则排除北交所"
+  board_as_of: "FIRST_LIMIT_DOWN_DATE_PRE_OPEN"
+  missing_board_action: "HALT_SECURITY"
+
+continuous_limit_down:
+  event_type: "NON_ST_CONTINUOUS_LIMIT_DOWN"
+  only_non_st: true
+  fact_method: "CLOSE_EQUALS_LIMIT_DOWN_PRICE"
+  required_trading_status: "NORMAL_TRADED"
+  numeric_type: "DECIMAL"
+  decimal_scale: 6
+  tolerance: "0.000000"
+  reset_at_observation_start: true
+  break_on_non_limit_down: true
+  break_on_suspension: true
+  break_on_transition_to_st: true
+  keep_multiple_events_per_security: true
+  minimum_segment_length_for_detail: 2
+  keep_open_segment_at_observation_end: true
+  risk_date: "THRESHOLD_REACHED_DATE"
+
+new_st_event:
+  event_type: "NEW_ST"
+  merge_st_and_star_st: true
+  transition: "NON_ST_TO_ST_OR_STAR_ST"
+  count_each_transition_after_release: true
+  st_to_star_st_is_new_event: false
+  carryover_from_previous_year_is_new_event: false
+  history_input_start: "2023-10-09"
+  initial_state_missing_action: "PREVALIDATION_HALT_SECURITY"
+
+event_identity:
+  unique_key: ["market_code", "security_code", "event_type", "first_fact_date"]
+  segment_number_is_display_only: true
+
+prevalidation_gate:
+  require_allow_run: true
+  partial_market_missing_action: "HALT_ALL"
+  full_trading_day_missing_action: "HALT_ALL"
+  silent_drop_allowed: false
+  silent_imputation_allowed: false
+
+outputs:
+  continuous_segment_detail:
+    minimum_length: 2
+    fields: ["security_code", "segment_number", "consecutive_length", "first_fact_date", "last_fact_date", "open_at_observation_end", "board_code", "threshold_reached", "applicable_threshold"]
+  risk_event_list:
+    event_types: ["NON_ST_CONTINUOUS_LIMIT_DOWN", "NEW_ST"]
+    audit_fields: ["rule_version", "calculation_batch_id", "upstream_snapshot_id"]
+  broker_metric_results:
+    csv_schema: "broker_metric_csv_cn_v1"
+    external_field_language: "zh-CN"
+    internal_python_fields: "STABLE_ENGLISH"
+    overwrite_allowed: false
+
+broker_classification:
+  mapping_file: "configs/broker_mapping/broker_mapping_v2.yaml"
+  mapping_version: "v2"
+  valid_until: "NEXT_CLASSIFICATION_OR_EXPLICIT_END"
+  date_only_available_at: "END_OF_CLASSIFICATION_DATE"
+  date_only_usable_from: "NEXT_TRADING_DAY"
+  early_identification_cutoff: "PREVIOUS_TRADING_DAY_CLOSE_BEFORE_FIRST_RISK_FACT"
+  first_fact_date_by_event_type:
+    NON_ST_CONTINUOUS_LIMIT_DOWN: "FIRST_LIMIT_DOWN_DATE"
+    NEW_ST: "FIRST_ST_DATE"
+  selection: "LATEST_AVAILABLE_AND_EFFECTIVE_CLASSIFICATION_AT_CUTOFF"
+  weekend_source_rows:
+    applies_when: "BIZ_DATE_IS_SATURDAY_OR_SUNDAY"
+    action: "IGNORE_ROW_BEFORE_CLASSIFICATION_STATE_CHAIN"
+    creates_classification_state: false
+    creates_unknown_state: false
+    breaks_dangerous_run_continuity: false
+    resets_dangerous_run_start: false
+    participates_in_pit_selection: false
+    participates_in_warning_rate_snapshot: false
+    preserve_source_for_audit: true
+    audit_finding_code: "BM106_WEEKEND_HISTORY_ROW_IGNORED"
+    manifest_counts: ["SOURCE_WEEKEND_ROWS", "ELIGIBLE_MARKET_WEEKEND_ROWS", "NONBLANK_BROKER_CELLS", "AFFECTED_DATES"]
+  event_day_st_override_counts_as_broker_early_identification: false
+  daily_precedence:
+    - when: "ST_STATUS_MISSING"
+      result: "UNKNOWN"
+      metric_action: "EXCLUDE_RECORD_WITH_AUDIT"
+    - when: "ST_OR_STAR_ST"
+      result: "DANGEROUS"
+      reason: "ST_OVERRIDE"
+      preserve_raw_value_and_raw_anomaly: true
+    - when: "NON_ST_AND_RAW_BLANK"
+      result: "NON_DANGEROUS"
+      display_value: "一般股票"
+    - when: "NON_ST_AND_RAW_EXACTLY_MAPPED"
+      result: "USE_EXACT_MAPPING"
+    - when: "NON_ST_AND_RAW_UNKNOWN_OR_ILLEGAL"
+      result: "UNKNOWN"
+      metric_action: "EXCLUDE_RECORD_WITH_AUDIT"
+
+warning_days:
+  enabled: true
+  evaluation_unit: "RISK_EVENT_X_BROKER"
+  risk_anchor: "FIRST_FACT_DATE"
+  cutoff: "PREVIOUS_TRADING_DAY_CLOSE_BEFORE_FIRST_RISK_FACT"
+  run_start: "FIRST_CLASSIFICATION_DATE_OF_MOST_RECENT_CONTINUOUS_DANGEROUS_RUN_AT_CUTOFF"
+  counting_unit: "SECURITY_MARKET_TRADING_DAY"
+  formula: "TRADING_DAY_ORDINAL_FIRST_FACT_MINUS_DANGEROUS_RUN_START_CLASSIFICATION_DATE"
+  interval_equivalent: "(DANGEROUS_RUN_START_CLASSIFICATION_DATE, FIRST_FACT_DATE]"
+  previous_trading_day_to_first_fact_result: 1
+  repeated_dangerous_resets_run: false
+  ignored_weekend_source_rows_break_continuity: false
+  non_dangerous_then_dangerous_resets_run: true
+  unknown_breaks_continuity_proof: true
+  dangerous_after_unknown_starts_new_run: true
+  keep_multiple_events_per_security: true
+  unavailable_value: null
+  no_usable_classification:
+    identification_status: "NOT_IDENTIFIED"
+    warning_days_status: "NOT_APPLICABLE"
+  final_non_dangerous:
+    identification_status: "NOT_IDENTIFIED"
+    warning_days_status: "NOT_APPLICABLE"
+  illegal_or_unmapped_raw_value:
+    identification_status: "UNKNOWN"
+    warning_days_status: "UNKNOWN"
+  insufficient_pit_st_or_calendar_evidence:
+    identification_status: "UNKNOWN"
+    warning_days_status: "UNKNOWN"
+  left_censored_dangerous_run:
+    identification_status: "IDENTIFIED"
+    warning_days_status: "UNKNOWN"
+    lower_bound_may_be_audit_only: true
+    official_warning_days_must_be_null: true
+
+metrics:
+  warning_days_distribution:
+    enabled: true
+    source_records: "EVENT_BROKER_ASSESSMENTS_WITH_WARNING_DAYS_STATUS_DEFINED"
+    group_by: ["broker_id", "event_type_view"]
+    event_type_views: ["NON_ST_CONTINUOUS_LIMIT_DOWN", "NEW_ST", "ALL_RISK_EVENTS"]
+    keep_multiple_events_per_security: true
+    statistics: ["MIN", "MAX", "MEDIAN", "MEAN"]
+    min_max_type: "INTEGER"
+    median_mean_numeric_type: "DECIMAL"
+    median_mean_decimal_scale: 6
+    rounding: "ROUND_HALF_UP"
+    zero_sample_result: null
+    zero_sample_status: "NOT_APPLICABLE"
+  risk_hit_rate:
+    enabled: true
+    display_name_zh: "风险命中率"
+    hit_definition: "FINAL_CLASSIFICATION_DANGEROUS_AT_PREVIOUS_TRADING_DAY_CLOSE_BEFORE_FIRST_FACT"
+    units: ["RISK_EVENT", "DISTINCT_RISK_SECURITY"]
+    event_type_views: ["NON_ST_CONTINUOUS_LIMIT_DOWN", "NEW_ST", "ALL_RISK_EVENTS"]
+    event_numerator: "IDENTIFIED_RISK_EVENT_COUNT"
+    event_denominator: "RISK_EVENT_COUNT"
+    security_numerator: "DISTINCT_IDENTIFIED_RISK_SECURITY_COUNT"
+    security_denominator: "DISTINCT_RISK_SECURITY_COUNT"
+    event_distinct_key: ["market_code", "security_code", "event_type", "first_fact_date"]
+    security_distinct_key: ["market_code", "security_code"]
+    zero_denominator_result: null
+    zero_denominator_status: "NOT_APPLICABLE"
+  dangerous_bucket_efficiency:
+    enabled: true
+    display_name_zh: "预警率"
+    canonical_business_name: "DANGEROUS_BUCKET_EFFICIENCY_D_053"
+    aggregation_views: ["SNAPSHOT", "OBSERVATION_PERIOD"]
+    event_type_views: ["NON_ST_CONTINUOUS_LIMIT_DOWN", "NEW_ST", "ALL_RISK_EVENTS"]
+    denominator_scope: "PER_BROKER_OWN_DANGEROUS_SET"
+    snapshot_distinct_key: ["broker_id", "snapshot_id", "market_code", "security_code"]
+    period_distinct_key: ["broker_id", "market_code", "security_code"]
+    numerator: "DISTINCT_DANGEROUS_SECURITIES_WITH_MATCHING_RISK"
+    denominator: "DISTINCT_SECURITIES_IN_BROKER_OWN_DANGEROUS_SET"
+    zero_denominator_result: null
+    zero_denominator_status: "NOT_APPLICABLE"
+

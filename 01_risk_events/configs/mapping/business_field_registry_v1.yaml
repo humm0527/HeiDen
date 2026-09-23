@@ -1,0 +1,484 @@
+schema_version: 1
+registry_version: "1.5-approved"
+tables:
+  交易日历表:
+    python_table: trading_calendar
+    fields:
+      - business_field: 交易市场代码
+        python_field: market_code
+        data_type: string
+        required: true
+        nullable: false
+      - business_field: 日历日期
+        python_field: calendar_date
+        data_type: date
+        required: true
+        nullable: false
+      - business_field: 记录版本号
+        python_field: record_version
+        data_type: integer
+        required: true
+        nullable: false
+      - business_field: 是否交易日
+        python_field: is_trading_day
+        data_type: boolean
+        required: true
+        nullable: false
+      - business_field: 交易时段状态
+        python_field: trading_session_status
+        data_type: string
+        required: true
+        nullable: false
+      - business_field: 日历生效时间
+        python_field: calendar_effective_at
+        data_type: datetime
+        required: true
+        nullable: false
+      - business_field: 信息可得时间
+        python_field: information_available_at
+        data_type: datetime
+        required: true
+        nullable: false
+      - business_field: 记录入库时间
+        python_field: ingested_at
+        data_type: datetime
+        required: true
+        nullable: false
+      - business_field: 来源类型
+        python_field: source_type
+        data_type: string
+        required: true
+        nullable: false
+      - business_field: 来源记录标识
+        python_field: source_record_id
+        data_type: string
+        required: true
+        nullable: false
+      - business_field: 计划开市时间
+        python_field: scheduled_open_at
+        data_type: datetime
+        required: false
+        nullable: true
+      - business_field: 计划收市时间
+        python_field: scheduled_close_at
+        data_type: datetime
+        required: false
+        nullable: true
+  证券基础状态日表:
+    python_table: security_status_daily
+    fields:
+      - business_field: 交易市场代码
+        python_field: market_code
+        data_type: string
+        required: true
+        nullable: false
+      - business_field: 证券代码
+        python_field: security_code
+        data_type: string
+        required: true
+        nullable: false
+      - business_field: 状态日期
+        python_field: status_date
+        data_type: date
+        required: true
+        nullable: false
+      - business_field: 记录版本号
+        python_field: record_version
+        data_type: integer
+        required: true
+        nullable: false
+      - business_field: 板块代码
+        python_field: board_code
+        data_type: string
+        required: true
+        nullable: false
+      - business_field: 证券类型
+        python_field: security_type
+        data_type: string
+        required: true
+        nullable: false
+      - business_field: 生命周期状态
+        python_field: lifecycle_status
+        data_type: string
+        required: true
+        nullable: false
+      - business_field: 上市日期
+        python_field: listed_date
+        data_type: date
+        required: true
+        nullable: true
+      - business_field: 退市日期
+        python_field: delisted_date
+        data_type: date
+        required: true
+        nullable: true
+      - business_field: 交易资格状态
+        python_field: trading_eligibility_status
+        data_type: string
+        required: true
+        nullable: false
+      - business_field: 状态生效时间
+        python_field: status_effective_at
+        data_type: datetime
+        required: true
+        nullable: false
+      - business_field: 信息可得时间
+        python_field: information_available_at
+        data_type: datetime
+        required: true
+        nullable: false
+      - business_field: 记录入库时间
+        python_field: ingested_at
+        data_type: datetime
+        required: true
+        nullable: false
+      - business_field: 来源类型
+        python_field: source_type
+        data_type: string
+        required: true
+        nullable: false
+      - business_field: 来源记录标识
+        python_field: source_record_id
+        data_type: string
+        required: true
+        nullable: false
+      - business_field: 证券简称
+        python_field: security_name
+        data_type: string
+        required: false
+        nullable: true
+      - business_field: 行业分类
+        python_field: industry_classification
+        data_type: string
+        required: false
+        nullable: true
+      - business_field: 流通股本
+        python_field: circulating_shares
+        data_type: decimal
+        required: false
+        nullable: true
+  股票日行情表:
+    python_table: stock_market_daily
+    fields:
+      - business_field: 交易市场代码
+        python_field: market_code
+        data_type: string
+        required: true
+        nullable: false
+      - business_field: 证券代码
+        python_field: security_code
+        data_type: string
+        required: true
+        nullable: false
+      - business_field: 交易日期
+        python_field: trading_date
+        data_type: date
+        required: true
+        nullable: false
+      - business_field: 行情版本号
+        python_field: market_data_version
+        data_type: integer
+        required: true
+        nullable: false
+      - business_field: 成交状态
+        python_field: trading_status
+        data_type: string
+        required: true
+        nullable: false
+      - business_field: 前收盘价
+        python_field: previous_close
+        data_type: decimal
+        required: true
+        nullable: true
+      - business_field: 开盘价
+        python_field: open_price
+        data_type: decimal
+        required: true
+        nullable: true
+      - business_field: 最高价
+        python_field: high_price
+        data_type: decimal
+        required: true
+        nullable: true
+      - business_field: 最低价
+        python_field: low_price
+        data_type: decimal
+        required: true
+        nullable: true
+      - business_field: 收盘价
+        python_field: close_price
+        data_type: decimal
+        required: true
+        nullable: true
+      - business_field: 成交量
+        python_field: volume
+        data_type: decimal
+        required: true
+        nullable: true
+      - business_field: 成交额
+        python_field: turnover
+        data_type: decimal
+        required: true
+        nullable: true
+      - business_field: 涨停价
+        python_field: limit_up_price
+        data_type: decimal
+        required: true
+        nullable: true
+      - business_field: 跌停价
+        python_field: limit_down_price
+        data_type: decimal
+        required: true
+        nullable: true
+      - business_field: 信息可得时间
+        python_field: information_available_at
+        data_type: datetime
+        required: true
+        nullable: false
+      - business_field: 记录入库时间
+        python_field: ingested_at
+        data_type: datetime
+        required: true
+        nullable: false
+      - business_field: 来源类型
+        python_field: source_type
+        data_type: string
+        required: true
+        nullable: false
+      - business_field: 来源记录标识
+        python_field: source_record_id
+        data_type: string
+        required: true
+        nullable: false
+      - business_field: 复权因子
+        python_field: adjustment_factor
+        data_type: decimal
+        required: false
+        nullable: true
+      - business_field: 换手率
+        python_field: turnover_rate
+        data_type: decimal
+        required: false
+        nullable: true
+      - business_field: 总市值
+        python_field: total_market_cap
+        data_type: decimal
+        required: false
+        nullable: true
+      - business_field: 流通市值
+        python_field: float_market_cap
+        data_type: decimal
+        required: false
+        nullable: true
+  证券风险状态表:
+    python_table: security_risk_status
+    fields:
+      - business_field: 风险状态记录标识
+        python_field: risk_status_record_id
+        data_type: string
+        required: true
+        nullable: false
+      - business_field: 记录版本号
+        python_field: record_version
+        data_type: integer
+        required: true
+        nullable: false
+      - business_field: 交易市场代码
+        python_field: market_code
+        data_type: string
+        required: true
+        nullable: false
+      - business_field: 证券代码
+        python_field: security_code
+        data_type: string
+        required: true
+        nullable: false
+      - business_field: 风险状态类型
+        python_field: risk_status_type
+        data_type: string
+        required: true
+        nullable: false
+      - business_field: 风险状态值
+        python_field: risk_status_value
+        data_type: string
+        required: true
+        nullable: false
+      - business_field: 状态来源类别
+        python_field: status_source_category
+        data_type: string
+        required: true
+        nullable: false
+      - business_field: 状态开始日期
+        python_field: status_start_date
+        data_type: date
+        required: true
+        nullable: false
+      - business_field: 状态结束日期
+        python_field: status_end_date
+        data_type: date
+        required: true
+        nullable: true
+      - business_field: 首次事实日期
+        python_field: first_fact_date
+        data_type: date
+        required: true
+        nullable: true
+      - business_field: 达到门槛日期
+        python_field: threshold_reached_date
+        data_type: date
+        required: true
+        nullable: true
+      - business_field: 风险认定日期
+        python_field: risk_recognition_date
+        data_type: date
+        required: true
+        nullable: true
+      - business_field: 状态生效时间
+        python_field: status_effective_at
+        data_type: datetime
+        required: true
+        nullable: false
+      - business_field: 证据截止时间
+        python_field: evidence_cutoff_at
+        data_type: datetime
+        required: true
+        nullable: false
+      - business_field: 信息可得时间
+        python_field: information_available_at
+        data_type: datetime
+        required: true
+        nullable: false
+      - business_field: 风险规则版本号
+        python_field: risk_rule_version
+        data_type: string
+        required: true
+        nullable: true
+      - business_field: 计算批次标识
+        python_field: calculation_batch_id
+        data_type: string
+        required: true
+        nullable: true
+      - business_field: 上游数据快照标识
+        python_field: upstream_snapshot_id
+        data_type: string
+        required: true
+        nullable: false
+      - business_field: 记录入库时间
+        python_field: ingested_at
+        data_type: datetime
+        required: true
+        nullable: false
+      - business_field: 来源记录标识
+        python_field: source_record_id
+        data_type: string
+        required: true
+        nullable: false
+      - business_field: 状态置信标记
+        python_field: status_confidence_flag
+        data_type: string
+        required: false
+        nullable: true
+      - business_field: 风险原因分类
+        python_field: risk_reason_category
+        data_type: string
+        required: false
+        nullable: true
+  券商风险分类表:
+    python_table: broker_risk_classification
+    fields:
+      - business_field: 券商标识
+        python_field: broker_id
+        data_type: string
+        required: true
+        nullable: false
+      - business_field: 分类日期
+        python_field: classification_date
+        data_type: date
+        required: true
+        nullable: false
+      - business_field: 源快照版本号
+        python_field: source_snapshot_version
+        data_type: integer
+        required: true
+        nullable: false
+      - business_field: 交易市场代码
+        python_field: market_code
+        data_type: string
+        required: true
+        nullable: false
+      - business_field: 证券代码
+        python_field: security_code
+        data_type: string
+        required: true
+        nullable: false
+      - business_field: 分类映射版本号
+        python_field: classification_mapping_version
+        data_type: string
+        required: true
+        nullable: false
+      - business_field: 原始分类值
+        python_field: raw_classification_value
+        data_type: string
+        required: true
+        nullable: false
+      - business_field: 标准风险档位
+        python_field: standardized_risk_bucket
+        data_type: string
+        required: true
+        nullable: false
+      - business_field: 分类生效时间
+        python_field: classification_effective_at
+        data_type: datetime
+        required: true
+        nullable: false
+      - business_field: 源信息可得时间
+        python_field: source_information_available_at
+        data_type: datetime
+        required: true
+        nullable: false
+      - business_field: 映射生效时间
+        python_field: mapping_effective_at
+        data_type: datetime
+        required: true
+        nullable: false
+      - business_field: 映射结果生成时间
+        python_field: mapping_generated_at
+        data_type: datetime
+        required: true
+        nullable: false
+      - business_field: 记录入库时间
+        python_field: ingested_at
+        data_type: datetime
+        required: true
+        nullable: false
+      - business_field: 来源类型
+        python_field: source_type
+        data_type: string
+        required: true
+        nullable: false
+      - business_field: 来源快照标识
+        python_field: source_snapshot_id
+        data_type: string
+        required: true
+        nullable: false
+      - business_field: 映射记录标识
+        python_field: mapping_record_id
+        data_type: string
+        required: true
+        nullable: false
+      - business_field: 分类有效截止时间
+        python_field: classification_valid_until
+        data_type: datetime
+        required: false
+        nullable: true
+      - business_field: 分类原因代码
+        python_field: classification_reason_code
+        data_type: string
+        required: false
+        nullable: true
+      - business_field: 分类解释文本
+        python_field: classification_explanation
+        data_type: string
+        required: false
+        nullable: true
+
